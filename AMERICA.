@@ -1,0 +1,167 @@
+CREATE DATABASE company_db;
+use company_db;
+
+create table dep(
+dept_id  int primary key  auto_increment,
+dept_name varchar(50),
+location varchar(50),
+budget int not null
+
+);
+insert into dep ( dept_name, location, budget)
+values
+("HR", "New York", 200000 ),
+("it", "chicago", 500000 ),
+("sales", "dallas", 300000 ),
+("marketing", "chicago", 250000 ),
+("finance", "New York", 400000 ),
+("operations", "dallas", 350000 ),
+("logistics", "chicago", 180000 ),
+("R&D", "New York", 600000 ),
+("support", "dallas", 150000 ),
+("legal", "chicago", 220000 ),
+("procurement", "New York", 280000 ),
+("admin", "boston", 200000 ),
+("design", "san francisco", 320000 ),
+("quality", "boston", 210000 ),
+("training", "san francisco", 190000 );
+select*from dep where budget between 200000 and 300000;
+select*FROM dep where dept_id in(1, 3, 5);
+select*FROM dep where location  in('New York', 'dallas');
+select*from dep where location like 'N%';
+SELECT*FROM dep where location='New York' AND budget>200000;
+
+SELECT concat(dept_name,'  -->   ', location) as name_location FROM dep;
+SELECT substring(upper(location), 4,4 )  FROM dep;
+SELECT dept_name, length(dept_name) as len FROM dep; 
+
+UPDATE dep SET dept_name=concat("  ", dept_name, "  ") WHERE dept_id in(1,2,3,4);
+SELECT trim(dept_name) FROM dep;
+SELECT count(*) as count, sum(budget) as taotal FROM dep;
+SELECT max(budget ) as maxdata FROM dep;
+SELECT 'dallas', sum(budget) as totalbudget
+FROM dep
+GROUP  BY 'dallas';
+
+SELECT location, sum(budget) as total FROM dep GROUP BY location;
+SELECT location, count(*) as count FROM dep GROUP BY location HAVING count(*)>2;
+SELECT location, min(budget) as mindata FROM dep GROUP BY location;
+SELECT 
+location,
+min(budget) as minvalue
+FROM 	dep
+GROUP BY location 
+HAVING minvalue>150000;
+CREATE TABLE employees(
+emp_id INT PRIMARY KEY AUTO_INCREMENT,
+emp_name VARCHAR(50),
+salary INT,
+dept_id INT,
+foreign key (dept_id) references dep(dept_id)
+);
+INSERT INTO employees(emp_id, emp_name, salary, dept_id)
+VALUES
+(1, 'Amit', 50000, 1),
+
+(2, 'Priya', 60000, 2),
+
+(3, 'Rahul', 55000, 2),
+
+(4, 'Sneha', 70000, 3),
+
+(5, 'Rohit', 48000, NULL),
+
+(6, 'Anjali', 52000, 1),
+
+(7, 'Vikram', 58000, 2),
+
+(8, 'Kavya', 49000, 3),
+
+(9, 'Suresh', 61000, 2),
+
+(10,'Neha', 47000, NULL),
+
+(11,'Manish', 53000, 1),
+
+(12, 'Ritika', 68000, 3),
+
+(13, 'Arjun', 55000, 2),
+
+(14, 'Pooja', 50000, NULL),
+
+(15, 'Deepak', 62000, 4),
+
+(16, 'Isha', 48000, 5),
+
+(17, 'Nikhil',57000, 6),
+
+(18, 'Sakshi', 50000, 7),
+
+(19, 'Tanvi', 59000, 8),
+
+(20, 'Rohan', 53000, 9);
+select
+e.emp_id, e.emp_name, e.salary, d.dept_id, d.dept_name, d.location
+from employees e
+inner join dep d on e.dept_id=d.dept_id order by emp_id;
+select
+e.emp_id, e.emp_name, e.salary, d.dept_id, d.dept_name, d.location
+from employees e
+right join dep d on e.dept_id=d.dept_id order by emp_id;
+
+SELECT 
+	e.emp_name,e.salary
+    from employees e
+    left join dep d on e.dept_id= d.dept_id
+    where e.dept_id is null;
+    select
+    d.dept_name,
+    max(e.salary) as maxsalary
+    from dep d
+    inner join 
+    employees AS e
+    on d.dept_id=e.dept_id group by d.dept_name;
+    
+    select
+    d.dept_name,
+    count(e.emp_id) as empcount
+    from dep d
+    left join 
+    employees as e 
+    on d.dept_id=e.dept_id group by d.dept_name having empcount>=3;
+    SELECT emp_name, dept_id FROM employees WHERE dept_id=1
+    UNION
+    SELECT emp_name, dept_id FROM employees WHERE dept_id=2;
+    ALTER TABLE employees
+    ADD manager_id INT ,
+    ADD CONSTRAINT FOREIGN KEY (manager_id)
+    REFERENCES employees(emp_id);
+    UPDATE 
+    employees SET manager_id=2
+    WHERE emp_id in (4,5);
+    SELECT e1.emp_name, e2.emp_name AS manager
+    from employees e1
+    left join employees e2
+    on e1.manager_id=e2.manager_id;
+    CREATE TABLE colors(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    colorname VARCHAR(50)
+    );
+    
+    INSERT INTO colors(id, colorname)
+    VALUES
+(1, 'red'),
+
+(2, 'blue' );
+    
+    CREATE TABLE sizes(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    sizename VARCHAR(50)
+    );
+    INSERT INTO sizes(id, sizename)
+    VALUES
+(1, 'xxl'),
+
+(2, 'xl' );
+    select c.colorname, s.sizename
+    from colors c cross join sizes s ;
